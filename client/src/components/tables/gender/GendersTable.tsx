@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import Genders from "../../interfaces/Genders";
-import GenderServices from "../../services/GenderServices";
-import ErrorHandler from "../../handler/ErrorHandler";
-import Spinner from "../Spinner";
+import { Genders } from "../../../interfaces/Genders";
+import GenderService from "../../../services/GenderService";
+import ErrorHandler from "../../../handler/ErrorHandler";
+import Spinner from "../../Spinner";
+import { Link } from "react-router-dom";
 
 interface GendersTableProps {
   refreshGenders: boolean;
@@ -15,7 +16,7 @@ const GendersTable = ({ refreshGenders }: GendersTableProps) => {
   });
 
   const handleLoadGenders = () => {
-    GenderServices.loadGenders()
+    GenderService.loadGenders()
       .then((res) => {
         if (res.status === 200) {
           setState((prevState) => ({
@@ -48,10 +49,10 @@ const GendersTable = ({ refreshGenders }: GendersTableProps) => {
     <>
       <table className="table table-hover">
         <thead>
-          <tr className="align-middle">
-            <th className="text-center">No.</th>
-            <th className="text-center">Gender</th>
-            <th className="text-center">Action</th>
+          <tr className="text-center">
+            <th>No.</th>
+            <th>Gender</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -61,23 +62,35 @@ const GendersTable = ({ refreshGenders }: GendersTableProps) => {
                 <Spinner />
               </td>
             </tr>
-          ) : (
+          ) : state.genders.length > 0 ? (
             state.genders.map((gender, index) => (
               <tr className="align-middle text-center" key={index}>
-                <td className="text-center">{index + 1}</td>
-                <td className="text-center">{gender.gender}</td>
+                <td>{index + 1}</td>
+                <td>{gender.gender}</td>
                 <td>
-                  <div className="d-flex gap-2 justify-content-center">
-                    <button type="button" className="btn btn-primary">
+                  <div className="d-flex justify-content-center gap-2">
+                    <Link
+                      to={`/gender/edit/${gender.gender_id}`}
+                      className="btn btn-primary text-center"
+                    >
                       Edit
-                    </button>
-                    <button type="button" className="btn btn-danger">
+                    </Link>
+                    <Link
+                      to={`/gender/delete/${gender.gender_id}`}
+                      className="btn btn-danger text-center"
+                    >
                       Delete
-                    </button>
+                    </Link>
                   </div>
                 </td>
               </tr>
             ))
+          ) : (
+            <tr className="align-middle">
+              <td className="text-center" colSpan={3}>
+                No Genders Found
+              </td>
+            </tr>
           )}
         </tbody>
       </table>
