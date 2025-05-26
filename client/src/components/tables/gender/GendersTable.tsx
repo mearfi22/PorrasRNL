@@ -49,7 +49,7 @@ const GendersTable = ({ refreshGenders }: GendersTableProps) => {
     <>
       <table className="table table-hover">
         <thead>
-          <tr className="text-center">
+          <tr className="align-middle">
             <th>No.</th>
             <th>Gender</th>
             <th>Action</th>
@@ -64,20 +64,20 @@ const GendersTable = ({ refreshGenders }: GendersTableProps) => {
             </tr>
           ) : state.genders.length > 0 ? (
             state.genders.map((gender, index) => (
-              <tr className="align-middle text-center" key={index}>
+              <tr className="align-middle" key={index}>
                 <td>{index + 1}</td>
                 <td>{gender.gender}</td>
                 <td>
-                  <div className="d-flex justify-content-center gap-2">
+                  <div className="d-flex justify-content gap-2">
                     <Link
                       to={`/gender/edit/${gender.gender_id}`}
-                      className="btn btn-primary text-center"
+                      className="btn btn-primary"
                     >
                       Edit
                     </Link>
                     <Link
                       to={`/gender/delete/${gender.gender_id}`}
-                      className="btn btn-danger text-center"
+                      className="btn btn-danger"
                     >
                       Delete
                     </Link>

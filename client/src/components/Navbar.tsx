@@ -1,9 +1,18 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { FormEvent, useState } from "react";
+import ErrorHandler from "../handler/ErrorHandler";
+import SpinnerSmall from "./SpinnerSmall";
 
 const Navbar = () => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const [loadingLogout, setLoadingLogout] = useState(false);
+
   const menuItems = [
     {
-      route: "/",
+      route: "/genders",
       title: "Genders",
     },
     {
@@ -11,6 +20,40 @@ const Navbar = () => {
       title: "Users",
     },
   ];
+
+  const handleLogout = (e: FormEvent) => {
+    e.preventDefault();
+    console.log("Logout button clicked");
+    setLoadingLogout(true);
+
+    logout()
+      .then(() => {
+        console.log("Logout successful");
+        navigate("/");
+      })
+      .catch((error) => {
+        console.error("Logout error:", error);
+        ErrorHandler(error, null);
+      })
+      .finally(() => {
+        setLoadingLogout(false);
+      });
+  };
+
+  const handleUserFullName = () => {
+    const user = localStorage.getItem("user");
+    const parsedUser = user ? JSON.parse(user) : null;
+
+    if (!parsedUser) return ""; // Prevent error if user is null
+
+    const { first_name, middle_name, last_name } = parsedUser;
+
+    if (middle_name) {
+      return `${last_name}, ${first_name} ${middle_name[0]}.`;
+    } else {
+      return `${last_name}, ${first_name}`;
+    }
+  };
 
   return (
     <>
@@ -40,7 +83,22 @@ const Navbar = () => {
                 </li>
               ))}
             </ul>
+            {handleUserFullName()}
           </div>
+          <button
+            type="submit"
+            className="btn btn-danger"
+            onClick={handleLogout}
+            disabled={loadingLogout}
+          >
+            {loadingLogout ? (
+              <>
+                <SpinnerSmall /> Logging Out...
+              </>
+            ) : (
+              "Logout"
+            )}
+          </button>
         </div>
       </nav>
     </>
